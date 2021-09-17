@@ -2,6 +2,7 @@
 import { css } from '@emotion/react';
 
 const heading = css`
+  font-size: 50px;
   text-align: center;
 `;
 function Heading() {

@@ -1,6 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 
+const inputContainer = css`
+  margin: 0 auto;
+`;
 const label = css`
   display: block;
   margin-bottom: 5px;
@@ -10,20 +13,19 @@ const label = css`
 
 const input = css`
   width: 300px;
-  height: 40px;
+  height: 30px;
   padding: 10px;
   border: 2px solid #212529;
   border-radius: 5px;
-
-  font-size: 20px;
+  font-size: 25px;
 `;
 function Input(props) {
   return (
-    <div>
+    <div css={inputContainer}>
       <label css={label}>City</label>
       <input
         onChange={props.handleInputChange}
-        value={props.value}
+        value={props.city}
         css={input}
       />
     </div>

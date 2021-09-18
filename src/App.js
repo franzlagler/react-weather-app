@@ -1,61 +1,82 @@
-/** @jsxImportSource @emotion/react */
-import { css, Global } from '@emotion/react';
 import axios from 'axios';
-import { useState } from 'react';
-import Button from './Button';
-import Heading from './Heading';
-import Input from './Input';
+import { useEffect, useState } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import Home from './Pages/Home';
+import WeatherPreview from './Pages/WeatherPreview';
 
-const globalStyle = css`
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    padding: 30px;
-    background-color: #ffba08;
-  }
-`;
-
-const mainContainer = css`
-  display: grid;
-  justify-content: center;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border: 1px solid black;
-`;
+require('dotenv').config();
 
 function App() {
   const [userInput, setUserInput] = useState('');
+  const [weatherData, setWeatherData] = useState('');
 
-  async function fetchWeatherData() {
-    axios
-      .get(
-        'https://api.openweathermap.org/data/2.5/weather?q=Vienna&appid=NO API',
-      )
-      .then((res) => {
-        console.log(res.data);
-      });
-  }
+  const history = useHistory();
 
-  fetchWeatherData();
+  const checkDayTime = (input) => {
+    if (input.match(/d/)) {
+      return 'day';
+    }
+
+    return 'night';
+  };
 
   const handleInputChange = ({ currentTarget }) => {
     setUserInput(currentTarget.value);
   };
 
-  const handleSubmitClick = () => {};
+  async function handleSubmitClick(e) {
+    try {
+      const rawData = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${userInput}&units=metric&appid=${process.env.REACT_APP_API_KEY}`,
+      );
+      const { data } = rawData;
+
+      const weatherObject = {};
+      weatherObject.city = data.name;
+      weatherObject.temp = `${data.main.temp}°C`;
+
+      // Capitalize the first letter of each word
+      let weatherDescription = data.weather[0].description;
+      weatherDescription = weatherDescription.split(' ');
+      weatherDescription = weatherDescription.map(
+        (el) => el[0].toUpperCase() + el.substring(1, el.length),
+      );
+      weatherDescription = weatherDescription.join(' ');
+      weatherObject.description = weatherDescription;
+
+      weatherObject.icon = data.weather[0].icon;
+      weatherObject.iconUrl = `http://openweathermap.org/img/wn/${weatherObject.icon}@2x.png`;
+      weatherObject.dayTime = checkDayTime(weatherObject.icon);
+      setWeatherData(weatherObject);
+      history.push('/weatherdata');
+    } catch {
+      console.log('Error');
+      setUserInput('Invalid');
+      setTimeout(() => setUserInput(''), 1000);
+    }
+  }
+
+  const handleBackClick = () => {
+    history.push('/');
+  };
 
   return (
-    <>
-      <Global styles={globalStyle} />
-      <div css={mainContainer}>
-        <Heading />
-        <Input handleInputChange={handleInputChange} value={userInput} />
-        <Button handleSubmitClick={handleSubmitClick} />
-      </div>
-    </>
+    <Switch>
+      <Route exact path="/">
+        <Home
+          city={userInput}
+          handleInputChange={handleInputChange}
+          handleSubmitClick={handleSubmitClick}
+          weatherData={weatherData}
+        />
+      </Route>
+      <Route path="/weatherdata" component={WeatherPreview}>
+        <WeatherPreview
+          weatherData={weatherData}
+          handleBackClick={handleBackClick}
+        />
+      </Route>
+    </Switch>
   );
 }
 

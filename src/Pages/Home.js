@@ -1,7 +1,3 @@
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
-import { Link } from 'react-router-dom';
-import sun from '../../public/sun.svg';
 import Button from '../Components/Button';
 import GlobalStyle from '../Components/GlobalStyle';
 import HeadingContainer from '../Components/HeadingContainer';
@@ -10,16 +6,7 @@ import MainContainer from '../Components/MainContainer';
 import SelectionField from '../Components/SelectionField';
 import TextField from '../Components/TextField';
 
-const image = css`
-  width: 100px;
-  display: flex;
-  margin: 10px auto;
-`;
-
 function Home(props) {
-  const weatherData = props.weatherData;
-  console.log(weatherData);
-
   return (
     <>
       <GlobalStyle />
@@ -30,6 +17,7 @@ function Home(props) {
           <TextField
             handleInputChange={props.handleInputChange}
             city={props.city}
+            id="cityInput"
           />
           <Button onClick={props.handleGetLocation} link>
             Get Location

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import weatherReporter from '../../public/weather-reporter.svg';
 import Button from '../Components/Button';
 import GlobalStyle from '../Components/GlobalStyle';

@@ -1,11 +1,8 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import GlobalStyle from './Components/GlobalStyle';
 import Home from './Pages/Home';
 import WeatherPreview from './Pages/WeatherPreview';
-
-require('dotenv').config();
 
 function App() {
   const [cityInput, setCityInput] = useState('');
@@ -30,15 +27,15 @@ function App() {
   };
 
   const handleUnitChange = ({ currentTarget }) => {
-    const unit = currentTarget.id;
+    const selectedUnit = currentTarget.id;
 
-    if (unit === 'celsius') {
+    if (selectedUnit === 'celsius') {
       setUnit('metric');
     } else {
       setUnit('imperial');
     }
   };
-  async function handleSubmitClick(e) {
+  async function handleSubmitClick() {
     try {
       const rawData = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&units=${unit}&appid=${process.env.REACT_APP_WEATHER_API_KEY}`,
@@ -47,19 +44,18 @@ function App() {
 
       const weatherObject = {};
       weatherObject.city = data.name;
-      weatherObject.temp = `${Math.round(data.main.temp)}`;
+      weatherObject.temp = Math.round(data.main.temp);
 
       // Capitalize the first letter of each word
       let weatherDescription = data.weather[0].description;
       weatherDescription = weatherDescription.split(' ');
       weatherDescription = weatherDescription.map(
-        (el) => el[0].toUpperCase() + el.substring(1, el.length),
+        (el) => el[0].toUpperCase() + el.slice(1, el.length),
       );
       weatherDescription = weatherDescription.join(' ');
       weatherObject.description = weatherDescription;
 
       weatherObject.icon = data.weather[0].icon;
-      weatherObject.iconUrl = `http://openweathermap.org/img/wn/${weatherObject.icon}@2x.png`;
       weatherObject.dayTime = checkDayTime(weatherObject.icon);
       setWeatherData(weatherObject);
 

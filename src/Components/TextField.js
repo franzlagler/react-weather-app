@@ -26,8 +26,11 @@ const input = css`
 function TextField(props) {
   return (
     <div css={inputContainer}>
-      <label css={label}>City</label>
+      <label htmlFor={props.id} css={label}>
+        City
+      </label>
       <input
+        id={props.id}
         onChange={props.handleInputChange}
         value={props.city}
         css={input}

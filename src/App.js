@@ -1,14 +1,19 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
+import GlobalStyle from './Components/GlobalStyle';
 import Home from './Pages/Home';
 import WeatherPreview from './Pages/WeatherPreview';
 
 require('dotenv').config();
 
 function App() {
-  const [userInput, setUserInput] = useState('');
+  const [cityInput, setCityInput] = useState('');
+  const [unit, setUnit] = useState('');
   const [weatherData, setWeatherData] = useState('');
+  const [coordinates, setCoordinates] = useState([]);
+
+  const firstUpdate = useRef(true);
 
   const history = useHistory();
 
@@ -20,20 +25,29 @@ function App() {
     return 'night';
   };
 
-  const handleInputChange = ({ currentTarget }) => {
-    setUserInput(currentTarget.value);
+  const handleCityInputChange = ({ currentTarget }) => {
+    setCityInput(currentTarget.value);
   };
 
+  const handleUnitChange = ({ currentTarget }) => {
+    const unit = currentTarget.id;
+
+    if (unit === 'celsius') {
+      setUnit('metric');
+    } else {
+      setUnit('imperial');
+    }
+  };
   async function handleSubmitClick(e) {
     try {
       const rawData = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${userInput}&units=metric&appid=${process.env.REACT_APP_API_KEY}`,
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&units=${unit}&appid=${process.env.REACT_APP_WEATHER_API_KEY}`,
       );
       const { data } = rawData;
 
       const weatherObject = {};
       weatherObject.city = data.name;
-      weatherObject.temp = `${data.main.temp}°C`;
+      weatherObject.temp = `${Math.round(data.main.temp)}`;
 
       // Capitalize the first letter of each word
       let weatherDescription = data.weather[0].description;
@@ -48,11 +62,12 @@ function App() {
       weatherObject.iconUrl = `http://openweathermap.org/img/wn/${weatherObject.icon}@2x.png`;
       weatherObject.dayTime = checkDayTime(weatherObject.icon);
       setWeatherData(weatherObject);
+
       history.push('/weatherdata');
     } catch {
       console.log('Error');
-      setUserInput('Invalid');
-      setTimeout(() => setUserInput(''), 1000);
+      setCityInput('Invalid Input');
+      setTimeout(() => setCityInput(''), 1000);
     }
   }
 
@@ -60,19 +75,56 @@ function App() {
     history.push('/');
   };
 
+  useEffect(() => {
+    setCityInput('');
+  }, [weatherData]);
+
+  // Geolocation Functions
+
+  async function handleGetLocation() {
+    setCityInput('Loading...');
+    try {
+      let latitude, longitude;
+      await navigator.geolocation.getCurrentPosition(({ coords }) => {
+        latitude = coords.latitude;
+        longitude = coords.longitude;
+        setCoordinates([latitude, longitude]);
+      });
+    } catch {
+      setCityInput('Error');
+    }
+  }
+
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+    } else {
+      axios
+        .get(
+          `http://www.mapquestapi.com/geocoding/v1/reverse?key=${process.env.REACT_APP_MAP_API_KEY}&location=${coordinates[0]},${coordinates[1]}`,
+        )
+        .then((rawData) => {
+          setCityInput(rawData.data.results[0].locations[0].adminArea5);
+        });
+    }
+  }, [coordinates]);
+
   return (
     <Switch>
       <Route exact path="/">
         <Home
-          city={userInput}
-          handleInputChange={handleInputChange}
+          city={cityInput}
+          handleInputChange={handleCityInputChange}
+          handleUnitChange={handleUnitChange}
           handleSubmitClick={handleSubmitClick}
+          handleGetLocation={handleGetLocation}
           weatherData={weatherData}
         />
       </Route>
       <Route path="/weatherdata" component={WeatherPreview}>
         <WeatherPreview
           weatherData={weatherData}
+          unit={unit}
           handleBackClick={handleBackClick}
         />
       </Route>

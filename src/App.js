@@ -6,8 +6,12 @@ import WeatherPreview from './Pages/WeatherPreview';
 
 function App() {
   const [cityInput, setCityInput] = useState('');
-  const [unit, setUnit] = useState('');
-  const [weatherData, setWeatherData] = useState('');
+  const [unit, setUnit] = useState(() => {
+    return localStorage.getItem('unit') || '';
+  });
+  const [weatherData, setWeatherData] = useState(() => {
+    return JSON.parse(localStorage.getItem('weatherObject')) || '';
+  });
   const [coordinates, setCoordinates] = useState([]);
 
   const firstUpdate = useRef(true);
@@ -28,12 +32,14 @@ function App() {
 
   const handleUnitChange = ({ currentTarget }) => {
     const selectedUnit = currentTarget.id;
-
+    let tempUnit;
     if (selectedUnit === 'celsius') {
-      setUnit('metric');
+      tempUnit = 'metric';
     } else {
-      setUnit('imperial');
+      tempUnit = 'imperial';
     }
+    setUnit(tempUnit);
+    localStorage.setItem('unit', tempUnit);
   };
   async function handleSubmitClick() {
     try {
@@ -58,6 +64,7 @@ function App() {
       weatherObject.icon = data.weather[0].icon;
       weatherObject.dayTime = checkDayTime(weatherObject.icon);
       setWeatherData(weatherObject);
+      localStorage.setItem('weatherObject', JSON.stringify(weatherObject));
 
       history.push('/weatherdata');
     } catch {

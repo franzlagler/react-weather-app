@@ -106,7 +106,7 @@ function App() {
     } else {
       axios
         .get(
-          `http://www.mapquestapi.com/geocoding/v1/reverse?key=${process.env.REACT_APP_MAP_API_KEY}&location=${coordinates[0]},${coordinates[1]}`,
+          `https://www.mapquestapi.com/geocoding/v1/reverse?key=${process.env.REACT_APP_MAP_API_KEY}&location=${coordinates[0]},${coordinates[1]}`,
         )
         .then((rawData) => {
           setCityInput(rawData.data.results[0].locations[0].adminArea5);

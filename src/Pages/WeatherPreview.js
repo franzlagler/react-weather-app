@@ -1,9 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
+import { css, Global } from '@emotion/react';
 import styled from 'styled-components';
 import weatherReporter from '../../public/weather-reporter.svg';
 import Button from '../Components/Button';
-import GlobalStyle from '../Components/GlobalStyle';
 import MainContainer from '../Components/MainContainer';
 
 const WeatherPreviewContainer = styled.div`
@@ -61,9 +60,24 @@ const weatherReporterImage = css`
 function WeatherPreview(props) {
   const weatherData = props.weatherData;
 
+  const globalStyle = css`
+    *,
+    *::before,
+    *::after {
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      padding: 30px;
+      background-color: ${weatherData.dayTime === 'night'
+        ? '#272640 '
+        : '#ffd500'};
+    }
+  `;
+
   return (
     <>
-      <GlobalStyle dayTime={weatherData.dayTime} />
+      <Global styles={globalStyle} />
 
       <MainContainer>
         <h2 css={weatherPreviewHeading}>Weather Forecast</h2>

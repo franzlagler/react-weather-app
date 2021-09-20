@@ -1,5 +1,6 @@
+/** @jsxImportSource @emotion/react */
+import { css, Global } from '@emotion/react';
 import Button from '../Components/Button';
-import GlobalStyle from '../Components/GlobalStyle';
 import HeadingContainer from '../Components/HeadingContainer';
 import InputContainer from '../Components/InputContainer';
 import MainContainer from '../Components/MainContainer';
@@ -7,9 +8,25 @@ import SelectionField from '../Components/SelectionField';
 import TextField from '../Components/TextField';
 
 function Home(props) {
+  const weatherData = props.weatherData;
+
+  const globalStyle = css`
+    *,
+    *::before,
+    *::after {
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      padding: 30px;
+      background-color: ${weatherData.dayTime === 'night'
+        ? '#272640 '
+        : '#ffd500'};
+    }
+  `;
   return (
     <>
-      <GlobalStyle />
+      <Global styles={globalStyle} />
 
       <MainContainer>
         <HeadingContainer />

@@ -1,18 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 
-const inputContainer = css`
+const inputContainerStyle = css`
   display: grid;
   justify-content: center;
 `;
-const label = css`
+const labelStyle = css`
   display: block;
   margin: 20px auto 7px 5px;
   font-size: 22px;
   font-weight: bolder;
 `;
 
-const input = css`
+const inputStyle = css`
   width: 300px;
   padding: 10px;
   border: 2px solid #212529;
@@ -25,15 +25,15 @@ const input = css`
 `;
 function TextField(props) {
   return (
-    <div css={inputContainer}>
-      <label htmlFor={props.id} css={label}>
+    <div css={inputContainerStyle}>
+      <label htmlFor={props.id} css={labelStyle}>
         City
       </label>
       <input
         id={props.id}
-        onChange={props.handleInputChange}
+        onChange={props.handleCityInputChange}
         value={props.city}
-        css={input}
+        css={inputStyle}
       />
     </div>
   );

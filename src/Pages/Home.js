@@ -10,6 +10,7 @@ import TextField from '../Components/TextField';
 function Home(props) {
   const weatherData = props.weatherData;
 
+  // Global Style
   const globalStyle = css`
     *,
     *::before,
@@ -32,7 +33,7 @@ function Home(props) {
         <HeadingContainer />
         <InputContainer>
           <TextField
-            handleInputChange={props.handleInputChange}
+            handleCityInputChange={props.handleCityInputChange}
             city={props.city}
             id="cityInput"
           />

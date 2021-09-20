@@ -5,6 +5,7 @@ import Home from './Pages/Home';
 import WeatherPreview from './Pages/WeatherPreview';
 
 function App() {
+  // State Variables
   const [cityInput, setCityInput] = useState('');
   const [unit, setUnit] = useState(() => {
     return localStorage.getItem('unit') || '';
@@ -41,6 +42,7 @@ function App() {
     setUnit(tempUnit);
     localStorage.setItem('unit', tempUnit);
   };
+  // Fetch Weather Data
   async function handleSubmitClick() {
     try {
       const rawData = await axios.get(
@@ -78,12 +80,12 @@ function App() {
     history.push('/');
   };
 
+  // Resetting Tex Field when weather data update
   useEffect(() => {
     setCityInput('');
   }, [weatherData]);
 
-  // Geolocation Functions
-
+  // Get Coordinates
   async function handleGetLocation() {
     setCityInput('Loading...');
     try {
@@ -97,7 +99,7 @@ function App() {
       setCityInput('Error');
     }
   }
-
+  // Get City Name from Cooridnates
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
@@ -117,7 +119,7 @@ function App() {
       <Route exact path="/">
         <Home
           city={cityInput}
-          handleInputChange={handleCityInputChange}
+          handleCityInputChange={handleCityInputChange}
           handleUnitChange={handleUnitChange}
           handleSubmitClick={handleSubmitClick}
           handleGetLocation={handleGetLocation}

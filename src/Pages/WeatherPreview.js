@@ -60,6 +60,7 @@ const weatherReporterImage = css`
 function WeatherPreview(props) {
   const weatherData = props.weatherData;
 
+  // Global Style
   const globalStyle = css`
     *,
     *::before,

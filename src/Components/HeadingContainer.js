@@ -3,6 +3,7 @@
 import { css, keyframes } from '@emotion/react';
 import sun from '../../public/sun.svg';
 
+// Makes Sun Rotate
 const moveImage = keyframes`
 0%{
   transform: rotate(0deg);
@@ -27,20 +28,21 @@ const moveImage = keyframes`
 
 `;
 
+// Local Styles
 const headingContainerStyle = css`
   display: flex;
   align-items: center;
   margin: 0px auto;
 `;
 
-const heading = css`
+const headingStyle = css`
   position: relative;
   font-size: 60px;
   font-weight: normal;
   text-align: center;
 `;
 
-const image = css`
+const imageStyle = css`
   width: 80px;
   margin-right: 20px;
   animation: ${moveImage} 10s ease infinite;
@@ -49,8 +51,8 @@ const image = css`
 function HeadingContainer() {
   return (
     <div css={headingContainerStyle}>
-      <img src={sun} alt="Sun" css={image} />
-      <h1 css={heading}>Weather App</h1>
+      <img src={sun} alt="Sun" css={imageStyle} />
+      <h1 css={headingStyle}>Weather App</h1>
     </div>
   );
 }
